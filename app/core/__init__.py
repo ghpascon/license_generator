@@ -8,7 +8,7 @@ from smartx_rfid.utils import AlertsManager
 from app.db import setup_database
 
 # DEFAULT VARS
-FILES_PATH = get_frozen_path('config')
+FILES_PATH = 'config'
 DOCS_PATH = get_frozen_path('docs')
 SWAGGER_PATH = f'{DOCS_PATH}/SWAGGER.md'
 CONFIG_PATH = f'{FILES_PATH}/config.json'
