@@ -1,6 +1,6 @@
 [project]   
 name = "x-bridge"
-version = "7.0.0"
+version = "7.0.1"
 description = "Conector RFID SMARTX"
 authors = [
     {name = "Gabriel Henrique Pascon",email = "gh.pascon@gmail.com"}
@@ -22,7 +22,7 @@ dependencies = [
     "alembic (>=1.17.2,<2.0.0)",
     "pillow (>=12.1.0,<13.0.0)",
     "pystray (>=0.19.5,<0.20.0)",
-    "smartx_rfid (==7.0.5)",
+    "smartx_rfid (==7.2.5)",
     "toml (>=0.10.2,<0.11.0)"
 ]
 
