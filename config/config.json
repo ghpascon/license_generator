@@ -1,0 +1,7 @@
+{
+  "TITLE": "License Manager",
+  "LOG_PATH": "/home/gabriel/Desktop/Logs",
+  "DATABASE_URL": "mysql+pymysql://smartx:smartx@192.168.1.200:3303/smartx",
+  "PORT": 3000,
+  "STORAGE_DAYS": 7
+}

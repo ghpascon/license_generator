@@ -1,0 +1,50 @@
+<header class="fixed top-0 left-0 right-0 z-50 bg-white border-b-2 border-black">
+  <div class="max-w-full mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="flex justify-between items-center h-16 gap-4">
+      {# logo #}
+      <div class="flex items-center space-x-3 flex-shrink-0">
+        <img src="{{ url_for('static', path='images/smtx.png') }}" alt="" class="h-8 w-auto" />
+        <h1 class="text-lg sm:text-xl font-bold text-gray-900 truncate">
+          {{title}}
+        </h1>
+      </div>
+
+      {# navbar #}
+      <nav class="hidden md:flex items-center space-x-4 lg:space-x-6 flex-shrink-0">
+        <a href="/"
+          class="text-gray-700 hover:text-gray-900 font-medium text-sm lg:text-base whitespace-nowrap">Home</a>
+        <!-- ROUTES -->
+        <a href="/settings/application"
+          class="text-gray-700 hover:text-gray-900 font-medium text-sm lg:text-base whitespace-nowrap">Settings</a>
+        <a href="/logs"
+          class="text-gray-700 hover:text-gray-900 font-medium text-sm lg:text-base whitespace-nowrap">Logs</a>
+
+        <!-- DEV  -->
+        <a href="/docs"
+          class="text-gray-700 hover:text-gray-900 font-medium text-sm lg:text-base whitespace-nowrap">Docs</a>
+        <a href="/metrics"
+          class="text-gray-700 hover:text-gray-900 font-medium text-sm lg:text-base whitespace-nowrap">Metrics</a>
+      </nav>
+
+      {# Mobile menu button #}
+      <div class="md:hidden flex-shrink-0" x-data="{ open: false }">
+        <button @click="open = !open" class="text-gray-700 hover:text-gray-900 p-2">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+          </svg>
+        </button>
+
+        {# Mobile menu dropdown #}
+        <div x-show="open" @click.away="open = false"
+          class="absolute right-4 top-16 bg-white border border-gray-200 rounded-lg shadow-lg py-2 min-w-[150px]"
+          id="mobile-menu-dropdown">
+          <!-- Links will be cloned here by script -->
+        </div>
+      </div>
+
+    </div>
+  </div>
+  </div>
+</header>
+<!-- Spacer for fixed header -->
+<div class="h-16"></div>

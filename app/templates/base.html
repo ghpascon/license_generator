@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes"
+    />
+    <title>{{ title }}</title>
+    <!-- Tailwind CSS CDN for development -->
+    <link rel="icon" type="image/png" href="/static/images/logo.png" />
+    <script src="/static/js/tailwind.js"></script>
+
+    <!-- Alpine.js from local static files -->
+    <script defer src="/static/js/alpine.js"></script>
+
+    <!-- Hidden iframe for posts without page reload -->
+    <iframe name="hidden_iframe" style="display: none"></iframe>
+  </head>
+  <body
+    class="bg-gradient-to-br from-slate-50 to-blue-50 text-gray-800 min-h-screen flex flex-col"
+  >
+    <!-- Fixed Header -->
+    {% if include_header is not defined or include_header %} {% include
+    "includes/header.html" %} {% endif %}
+
+    <!-- Alerts System -->
+    {% include "includes/alerts.html" %} {% include "includes/_has_changes.html"
+    %}
+
+    <!-- Main Content Area -->
+    <main>{% block content %}{% endblock %}</main>
+
+    <!-- Fixed Footer -->
+    {% if include_header is not defined or include_header %} {% include
+    "includes/footer.html" %} {% endif %}
+  </body>
+</html>

@@ -1,0 +1,216 @@
+{% extends "base.html" %}
+{% block content %}
+<section x-data="licenseGenerator()" class="min-h-[calc(100vh-6rem)] px-4 py-10 sm:px-6 lg:px-8">
+  <div class="mx-auto max-w-3xl">
+    <div class="rounded-2xl border border-slate-200 bg-white p-8 shadow-sm sm:p-10">
+      <div class="max-w-2xl">
+        <h1 class="text-3xl font-semibold tracking-tight text-slate-900 sm:text-4xl">
+          Gerar licenca a partir da request string
+        </h1>
+        <p class="mt-3 text-sm leading-6 text-slate-600 sm:text-base">
+          Preencha os campos abaixo e gere a licenca sem recarregar a pagina.
+        </p>
+      </div>
+
+      <form class="mt-8 space-y-6" @submit.prevent="submitForm">
+        <div>
+          <label for="request_string" class="mb-2 block text-sm font-medium text-slate-700">
+            Request string
+          </label>
+          <textarea id="request_string" x-model="form.request_string" rows="7" required
+            class="w-full rounded-xl border border-slate-300 bg-white px-4 py-3 text-sm text-slate-900 outline-none transition focus:border-slate-500 focus:ring-2 focus:ring-slate-200"
+            placeholder="Cole aqui a request string recebida do dispositivo"></textarea>
+        </div>
+
+        <div class="grid gap-6 sm:grid-cols-[180px_1fr]">
+          <div>
+            <label for="days" class="mb-2 block text-sm font-medium text-slate-700">
+              Dias
+            </label>
+            <input id="days" x-model="form.days" type="number" min="1" required
+              class="w-full rounded-xl border border-slate-300 bg-white px-4 py-3 text-sm text-slate-900 outline-none transition focus:border-slate-500 focus:ring-2 focus:ring-slate-200"
+              placeholder="30" />
+          </div>
+
+          <div>
+            <label for="data" class="mb-2 block text-sm font-medium text-slate-700">
+              Dados adicionais em JSON
+            </label>
+            <textarea id="data" x-model="form.data" rows="4"
+              class="w-full rounded-xl border border-slate-300 bg-white px-4 py-3 font-mono text-sm text-slate-900 outline-none transition focus:border-slate-500 focus:ring-2 focus:ring-slate-200"
+              placeholder='{"customer": "ACME", "feature": "enterprise"}'></textarea>
+          </div>
+        </div>
+
+        <div class="flex flex-col gap-3 border-t border-slate-100 pt-6 sm:flex-row sm:items-center sm:justify-between">
+          <p class="text-sm text-slate-500">
+            Campos obrigatorios: request string e quantidade de dias.
+          </p>
+          <button type="submit" :disabled="isSubmitting"
+            class="inline-flex items-center justify-center rounded-xl bg-slate-900 px-5 py-3 text-sm font-semibold text-white transition hover:bg-slate-800 disabled:cursor-not-allowed disabled:bg-slate-400">
+            <span x-show="!isSubmitting">Gerar licenca</span>
+            <span x-show="isSubmitting">Gerando...</span>
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div x-show="modal.open" x-transition.opacity
+    class="fixed inset-0 z-[60] flex items-center justify-center bg-slate-950/45 px-4 py-6" @click.self="closeModal()">
+    <div class="w-full max-w-lg rounded-2xl border p-6 shadow-xl"
+      :class="modal.success ? 'border-green-200 bg-green-50' : 'border-red-200 bg-red-50'">
+      <div class="flex items-start justify-between gap-4">
+        <div class="flex items-start gap-3">
+          <div class="flex h-10 w-10 items-center justify-center rounded-full"
+            :class="modal.success ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'">
+            <svg x-show="modal.success" class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+            </svg>
+            <svg x-show="!modal.success" class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v5" />
+              <circle cx="12" cy="16.5" r="1" fill="currentColor" stroke="none" />
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z" />
+            </svg>
+          </div>
+          <div>
+            <p class="text-sm font-semibold" :class="modal.success ? 'text-green-700' : 'text-red-700'"
+              x-text="modal.success ? 'Sucesso' : 'Erro'"></p>
+            <h3 class="mt-1 text-xl font-semibold text-slate-900" x-text="modal.title"></h3>
+            <p class="mt-3 text-sm leading-6 text-slate-700" x-text="modal.message"></p>
+          </div>
+        </div>
+        <button type="button" @click="closeModal()"
+          class="rounded-full p-2 text-slate-500 transition hover:bg-white/70 hover:text-slate-700"
+          aria-label="Fechar modal">
+          <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M6 6l12 12M18 6L6 18" />
+          </svg>
+        </button>
+      </div>
+
+      <template x-if="modal.success && modal.license">
+        <div class="mt-6 rounded-xl border border-white/80 bg-white/80 p-4">
+          <div class="flex items-center justify-between gap-4">
+            <p class="text-sm font-medium text-slate-700">Licenca gerada</p>
+            <button type="button" @click="copyLicense()"
+              class="inline-flex items-center rounded-lg border border-slate-300 bg-white px-3 py-2 text-xs font-semibold text-slate-700 transition hover:bg-slate-100">
+              <span x-text="copied ? 'Copiado' : 'Copiar'"></span>
+            </button>
+          </div>
+          <textarea readonly :value="modal.license" rows="8"
+            class="mt-3 w-full rounded-xl border border-slate-300 bg-white px-4 py-3 font-mono text-xs text-slate-800 outline-none"></textarea>
+        </div>
+      </template>
+
+      <div class="mt-6 flex justify-end">
+        <button type="button" @click="closeModal()"
+          class="inline-flex items-center rounded-xl px-5 py-3 text-sm font-semibold text-white transition"
+          :class="modal.success ? 'bg-green-700 hover:bg-green-800' : 'bg-red-700 hover:bg-red-800'">
+          Fechar
+        </button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+  document.addEventListener('alpine:init', () => {
+    Alpine.data('licenseGenerator', () => ({
+      endpoint: "{{ request.url_for('generate_license_from_request_string') }}",
+      isSubmitting: false,
+      copied: false,
+      form: {
+        request_string: '',
+        days: 30,
+        data: '',
+      },
+      modal: {
+        open: false,
+        success: false,
+        title: '',
+        message: '',
+        license: '',
+      },
+
+      openModal(success, title, message, license = '') {
+        this.modal = {
+          open: true,
+          success,
+          title,
+          message,
+          license,
+        };
+        this.copied = false;
+      },
+
+      closeModal() {
+        this.modal.open = false;
+      },
+
+      async copyLicense() {
+        if (!this.modal.license) {
+          return;
+        }
+
+        try {
+          await navigator.clipboard.writeText(this.modal.license);
+          this.copied = true;
+        } catch (error) {
+          this.openModal(false, 'Erro ao copiar', 'Nao foi possivel copiar a licenca automaticamente.');
+        }
+      },
+
+      buildPayload() {
+        const payload = {
+          request_string: this.form.request_string,
+          days: Number(this.form.days),
+        };
+
+        const rawData = this.form.data.trim();
+        if (!rawData) {
+          return payload;
+        }
+
+        try {
+          payload.data = JSON.parse(rawData);
+        } catch (error) {
+          throw new Error('O campo de dados adicionais precisa conter um JSON valido.');
+        }
+
+        return payload;
+      },
+
+      async submitForm() {
+        this.isSubmitting = true;
+
+        try {
+          const payload = this.buildPayload();
+          const response = await fetch(this.endpoint, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(payload),
+          });
+
+          const result = await response.json().catch(() => ({}));
+
+          if (response.ok) {
+            this.openModal(true, 'Licenca gerada', 'A licenca foi gerada com sucesso.', result.license || '');
+            return;
+          }
+
+          const errorMessage = result.error || result.detail || 'Nao foi possivel gerar a licenca.';
+          this.openModal(false, 'Falha ao gerar licenca', errorMessage);
+        } catch (error) {
+          this.openModal(false, 'Falha ao gerar licenca', error.message || 'Erro inesperado ao enviar os dados.');
+        } finally {
+          this.isSubmitting = false;
+        }
+      },
+    }));
+  });
+</script>
+{% endblock %}

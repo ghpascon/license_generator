@@ -1,0 +1,10 @@
+{
+  "TITLE": "Gerenciador de Produtos - SMARTX",
+  "LOG_PATH": "C:/Users/DELL/Desktop/Logs",
+  "DATABASE_URL": "mysql+pymysql://smartx:smartx@192.168.1.200:3303/smartx_teste",
+  "PORT": 8000,
+  "STORAGE_DAYS": 7,
+  "APP_KEY": "1318987347678",
+  "APP_SECRET": "8b7293a77ae7773a5e9e638f5af46fd2",
+  "START_DATE_OMIE": "01/01/2026"
+}
